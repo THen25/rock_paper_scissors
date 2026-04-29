@@ -1,6 +1,16 @@
 // Global variables
 let humanScore = 0;
 let computerScore = 0;
+let roundCount = 0;
+
+const result = document.querySelector(".result");
+const score = document.querySelector(".score");
+const roundDisplay = document.querySelector(".round");
+
+const rockBtn = document.querySelector("#rockBtn");
+const paperBtn = document.querySelector("#paperBtn");
+const scissorsBtn = document.querySelector("#scissorsBtn");
+const resetBtn = document.querySelector("#resetBtn");
 
 // Get computer choice
 const getComputerChoice = () => {
@@ -15,48 +25,72 @@ const getComputerChoice = () => {
   }
 };
 
-// Get human choice
-const getHumanChoice = () => {
-  let userChoice = prompt("Enter rock, paper, or scissors");
-  return userChoice;
+const playRound = (humanChoice, computerChoice) => {
+  humanChoice = humanChoice.toLowerCase();
+  let resultMessage;
+  if (humanChoice === computerChoice) {
+    resultMessage = "Draw!";
+  } else if (humanChoice === "rock" && computerChoice === "scissors") {
+    resultMessage = "You win! Rock beats Scissors";
+    humanScore++;
+  } else if (humanChoice === "paper" && computerChoice === "rock") {
+    resultMessage = "You win! Paper beats Rock";
+    humanScore++;
+  } else if (humanChoice === "scissors" && computerChoice === "paper") {
+    resultMessage = "You win! Scissors beats Paper";
+    humanScore++;
+  } else if (humanChoice === "rock" && computerChoice === "paper") {
+    resultMessage = "You lose! Paper beats Rock";
+    computerScore++;
+  } else if (humanChoice === "paper" && computerChoice === "scissors") {
+    resultMessage = "You lose! Scissors beats Paper";
+    computerScore++;
+  } else if (humanChoice === "scissors" && computerChoice === "rock") {
+    resultMessage = "You lose! Rock beats Scissors";
+    computerScore++;
+  }
+  result.textContent = resultMessage;
+  score.textContent = `Human score: ${humanScore}
+  Computer score: ${computerScore}`;
 };
 
-const playGame = () => {
-  const playRound = (humanChoice, computerChoice) => {
-    humanChoice = humanChoice.toLowerCase();
-    if (humanChoice === computerChoice) {
-      console.log("Draw!");
-    } else if (humanChoice === "rock" && computerChoice === "scissors") {
-      console.log(`You win! Rock beats Scissors`);
-      humanScore++;
-    } else if (humanChoice === "paper" && computerChoice === "rock") {
-      console.log(`You win! Paper beats Rock`);
-      humanScore++;
-    } else if (humanChoice === "scissors" && computerChoice === "paper") {
-      console.log(`You win! Scissors beats Paper`);
-      humanScore++;
-    } else if (humanChoice === "rock" && computerChoice === "paper") {
-      console.log(`You lose! Paper beats Rock`);
-      computerScore++;
-    } else if (humanChoice === "paper" && computerChoice === "scissors") {
-      console.log(`You lose! Scissors beats Paper`);
-      computerScore++;
-    } else if (humanChoice === "scissors" && computerChoice === "rock") {
-      console.log(`You lose! Rock beats Scissors`);
-      computerScore++;
-    }
-    console.log(`
-    Human Score: ${humanScore}
-    Computer Score: ${computerScore}`);
-  };
+const compareChoices = (e) => {
+  let userChoice = e.target.textContent.toLowerCase();
+  let computerChoice = getComputerChoice();
 
-  //   Calls playRound() 5 times
-  for (let i = 1; i <= 5; i++) {
-    const humanSelection = getHumanChoice();
-    const computerSelection = getComputerChoice();
+  if (roundCount <= 4) {
+    roundDisplay.textContent = `Round ${roundCount + 1} of 5`;
+    playRound(userChoice, computerChoice);
+    roundCount++;
+  } else {
+    rockBtn.disabled = true;
 
-    playRound(humanSelection, computerSelection);
+    paperBtn.disabled = true;
+
+    scissorsBtn.disabled = true;
+
+    roundDisplay.textContent = "Game Over";
+    result.textContent = "Game over";
   }
 };
 
-playGame();
+const resetGame = () => {
+  result.textContent = "";
+  score.textContent = "";
+  roundDisplay.textContent = "";
+
+  rockBtn.disabled = false;
+
+  paperBtn.disabled = false;
+
+  scissorsBtn.disabled = false;
+
+  humanScore = 0;
+  computerScore = 0;
+  roundCount = 0;
+};
+
+rockBtn.addEventListener("click", compareChoices);
+paperBtn.addEventListener("click", compareChoices);
+scissorsBtn.addEventListener("click", compareChoices);
+resetBtn.addEventListener("click", resetGame);
